@@ -1,0 +1,27 @@
+.menu {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--bg-color);
+}
+
+.menu-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.menu-logo img {
+  width: auto;
+  height: 60px;
+}
+
+.menu-list {
+  display: flex;
+  align-items: left;
+  justify-content: center;
+  flex-direction: column;
+  list-style: none;
+  width: 230px;
+  margin: auto;
+}
