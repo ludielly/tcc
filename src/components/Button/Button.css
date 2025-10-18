@@ -1,4 +1,5 @@
 .btn {
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7,6 +8,7 @@
   border-radius: 8px;
   font-size: 16px;
   text-transform: capitalize;
+  transition: all .3s ease-in-out;
 }
 
 .btn:hover {
@@ -15,7 +17,30 @@
 
 .btn.primary {
   background-color: var(--secondary-color);
-  color: var(--primary-color);
   border: none;
   box-shadow: 2px 2px 8px rgba(30,30,30,.2);
+}
+
+.btn.primary:hover {
+  background-color: var(--secondary-color-hover);
+}
+
+.btn.primary:active {
+  background-color: var(--secondary-color-focus);
+  box-shadow: none;
+}
+
+.btn.secondary {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+}
+
+.btn.secondary:hover {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+.btn.secondary:hover {
+  background-color: var(--primary-color-focus);
+  color: var(--white-color);
 }

@@ -1,5 +1,5 @@
 .menu {
-  width: 250px;
+  width: 280px;
   height: 100vh;
   background-color: var(--bg-color);
 }
@@ -22,6 +22,6 @@
   justify-content: center;
   flex-direction: column;
   list-style: none;
-  width: 230px;
+  width: 250px;
   margin: auto;
 }

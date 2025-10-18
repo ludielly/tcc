@@ -1,17 +1,10 @@
 import React from 'react'
 import './Button.css'
 
-function Button({icon, text, handleClick, type}) {
-  var btnIcon;
-  if (icon) {
-    btnIcon = React.cloneElement(icon, { size: 16, weight: "bold" });
-  } else {
-    btnIcon = null
-  }
-  
+function Button({icon: Icon, text, handleClick, type}) {  
   return (
-    <button className={type === "outline" ? "btn outline" : "btn primary"} onClick={handleClick}>
-      {btnIcon}
+    <button className={type === "secondary" ? "btn secondary" : "btn primary"} onClick={handleClick}>
+      {Icon && <Icon size={16} weight="bold" />}
       {text}
     </button>
   )
