@@ -1,11 +1,11 @@
 import React from 'react'
 import './Button.css'
 
-function Button({icon: Icon, text, handleClick, type}) {  
+function Button({icon: Icon, handleClick, type, children}) {  
   return (
     <button className={type === "secondary" ? "btn secondary" : "btn primary"} onClick={handleClick}>
       {Icon && <Icon size={16} weight="bold" />}
-      {text}
+      {children}
     </button>
   )
 }
