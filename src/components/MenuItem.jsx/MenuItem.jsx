@@ -1,14 +1,15 @@
 import React from "react";
 import './MenuItem.css';
+import { NavLink } from "react-router-dom";
 
-function MenuItem({ icon, text, isActive }) {
-  const menuIcon = React.cloneElement(icon, { size: 20, weight: "fill" });
+function MenuItem({ icon, text, page }) {
+  const menuIcon = React.cloneElement(icon, { size: 22, weight: "fill" });
 
   return (
-    <li className={isActive ? "menu-item active" : "menu-item"}>
+    <NavLink to={page} className="menu-item">
       {menuIcon}
-      <span>{text}</span>
-    </li>
+      {text}
+    </NavLink>
   );
 }
 

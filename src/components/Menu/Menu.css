@@ -24,4 +24,9 @@
   list-style: none;
   width: 250px;
   margin: auto;
+  gap: 4px;
+}
+
+.menu-list a {
+  text-decoration: none;
 }

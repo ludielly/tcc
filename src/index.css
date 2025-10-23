@@ -21,3 +21,7 @@
   font-family: "Rubik", sans-serif;
   color: var(--text-color);
 }
+
+h1 {
+  color: var(--primary-color);
+}

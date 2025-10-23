@@ -1,14 +1,28 @@
 .menu-item {
   display: flex;
   align-items: center;
+  text-decoration: none;
   gap: 10px;
   padding: 20px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 20px;
+  transition: all .2s ease-in-out;
   color: var(--primary-color);
+}
+
+.menu-item svg {
+  fill: var(--primary-color);
 }
 
 .menu-item.active {
   background-color: #E6E9EF;
   font-weight: 600;
+}
+
+.menu-item:hover {
+  background-color: #ebeef3;
+}
+
+.menu-item:active {
+  background-color: #E6E9EF;
 }
