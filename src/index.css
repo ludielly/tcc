@@ -25,3 +25,8 @@
 h1 {
   color: var(--primary-color);
 }
+
+fieldset {
+  border: none;
+  margin-bottom: 15px;
+}

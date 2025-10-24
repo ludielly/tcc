@@ -1,124 +1,140 @@
-import React, { useState } from 'react'
-import "./Clientes.css"
-import Button from '../../components/Button/Button'
-import Input from '../../components/Input/Input'
-import Modal from '../../components/Modal/Modal'
-import { MagnifyingGlassIcon, PencilSimpleIcon, PlusIcon } from '@phosphor-icons/react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Clientes.css";
+import Button from "../../components/Button/Button";
+import Input from "../../components/Input/Input";
+import Select from "../../components/Input/Select";
+import Label from "../../components/Label/Label";
+import Modal from "../../components/Modal/Modal";
+import {
+  ArrowSquareOutIcon,
+  MagnifyingGlassIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
 
 function Clientes() {
+  let navigate = useNavigate();
   const [busca, setBusca] = useState("");
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [novoCliente, setNovoCliente] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpfCnpj: "",
-    qtdProcessos: 0,
-  });
 
-  // Filtragem
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
   const clientesFiltrados = clientes.filter((c) =>
     c.nome.toLowerCase().includes(busca.toLowerCase())
   );
 
-  // Abrir e fechar modal
-  const openModal = () => setShowModal(true);
-  const fecharModal = () => setShowModal(false);
-
-  // Atualizar dados do novo cliente
-  const handleChangeNovoCliente = (e) => {
-    const { name, value } = e.target;
-    setNovoCliente((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Adicionar cliente à lista
   const handleSave = () => {
-    if (!novoCliente.nome || !novoCliente.email) {
-      alert("Preencha pelo menos nome e e-mail!");
-      return;
-    }
+    closeModal();
+  }
 
-    setClientes((prev) => [...prev, novoCliente]);
-    setNovoCliente({
-      nome: "",
-      email: "",
-      telefone: "",
-      cpfCnpj: "",
-      qtdProcessos: 0,
-    });
-    fecharModal();
+  const redirectToAddProcess = (e) => {
+    e.preventDefault(); 
+    handleSave();
+    navigate('/processos');
+  }
 
-    return (
-      <div className="clientes-container">
-        {/* Cabeçalho */}
-        <div className="header">
-          <h1>Clientes</h1>
-          <Button icon={PlusIcon} handleClick={openModal}>
-            Novo Cliente
-          </Button>
-        </div>
+  return (
+    <div className="clientes-container">
+      <div className="header">
+        <h1>Clientes</h1>
+        <Button icon={PlusIcon} handleClick={openModal}>Novo Cliente</Button>
+      </div>
 
-        {/* Campo de busca */}
-        <div className="input">
-          <Input
-            startIcon={MagnifyingGlassIcon}
-            placeholder="Buscar cliente"
-            handleChange={(e) => setBusca(e.target.value)}
-            value={busca}
-          />
-        </div>
+      <div className="input">
+        <Input
+          startIcon={MagnifyingGlassIcon}
+          placeholder="Buscar cliente"
+          handleChange={(e) => setBusca(e.target.value)}
+          value={busca}
+        />
+      </div>
 
-        {/* Tabela */}
-        <div className="tabela-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Telefone</th>
-                <th>CPF/CNPJ</th>
-                <th>Qtd. Processos</th>
-                <th>Editar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientesFiltrados.length > 0 ? (
-                clientesFiltrados.map((c, index) => (
-                  <tr key={index}>
-                    <td>{c.nome}</td>
-                    <td>{c.email}</td>
-                    <td>{c.telefone}</td>
-                    <td>{c.cpfCnpj}</td>
-                    <td>{c.qtdProcessos}</td>
-                    <td>
-                      <PencilSimpleIcon weight="fill" size={16} />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    Nenhum cliente encontrado
+      <div className="table-container">
+        <table className="table">
+          <thead className="table-head">
+            <tr>
+              <th className="table-header">Nome</th>
+              <th className="table-header">E-mail</th>
+              <th className="table-header">Telefone</th>
+              <th className="table-header">CPF/CNPJ</th>
+              <th className="table-header">Qtd. Processos</th>
+              <th className="table-header">Editar</th>
+            </tr>
+          </thead>
+          <tbody className="table-body">
+            {clientesFiltrados.length > 0 ? (
+              clientesFiltrados.map((c, index) => (
+                <tr key={index}>
+                  <td className="table-data">{c.nome}</td>
+                  <td className="table-data">{c.email}</td>
+                  <td className="table-data">{c.telefone}</td>
+                  <td className="table-data">{c.cpfCnpj}</td>
+                  <td className="table-data">{c.qtdProcessos}</td>
+                  <td className="table-data">
+                    <PencilSimpleIcon weight="fill" size={16} />
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            ) : (
+              <tr className="no-data">
+                <td className="table-data" colSpan="6" style={{ textAlign: "center" }}>
+                  Nenhum cliente encontrado
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-
-        {showModal && (
-          <Modal title="Novo Cliente" subtitle="Cliente > Novo Cliente" onSave={handleSave}>
+      {
+        showModal && (
+          <Modal
+            open={showModal}
+            onClose={closeModal}
+            onSave={handleSave}
+            title="Novo Cliente"
+          >
             <form>
-             teste
+              <fieldset>
+                <Label id="name">Nome</Label>
+                <Input id="name" type="text" placeholder="Nome do cliente" />
+              </fieldset>
+              <div className="two-columns">
+                <fieldset>
+                  <Label id="email">E-mail</Label>
+                  <Input id="email" type="email" placeholder="exemplo@email.com" />
+                </fieldset>
+                <fieldset>
+                  <Label id="phone">Telefone</Label>
+                  <Input id="phone" type="tel" placeholder="(00) 00000-0000" />
+                </fieldset>
+              </div>
+              <div className="two-columns">
+                <fieldset>
+                  <Label id="cpfCnpj">CPF/CNPJ</Label>
+                  <Input id="cpfCnpj" type="text" placeholder="00.000.000/0000-00" />
+                </fieldset>
+                <fieldset>
+                  <Label id="clientType">Tipo de Cliente</Label>
+                  <Select id="clientType">
+                    <option value="">Selecione o tipo</option>
+                    <option value="individual">Pessoa Física</option>
+                    <option value="company">Pessoa Jurídica</option>
+                  </Select>
+                </fieldset>
+              </div>
+              <a className="form-link" href="/processos" onClick={redirectToAddProcess}>
+                <ArrowSquareOutIcon size={15} weight="bold" />
+                Adicionar processo relacionado
+              </a>
             </form>
           </Modal>
         )}
-      </div>
-
-    )
-  }
+    </div>
+  );
 }
 
-export default Clientes
+export default Clientes;
