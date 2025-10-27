@@ -1,9 +1,9 @@
 import React from 'react'
 import "./Input.css"
 
-function Select({id, children}) {
+function Select({id, children, className, handleChange, value}) {
   return (
-    <select id={id} className='select'>
+    <select id={id} className={`select ${className || ''}`} onChange={handleChange} value={value}>
       {children}
     </select>
   )

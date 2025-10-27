@@ -1,0 +1,35 @@
+.advogados-container .table-header:nth-child(1) {
+  width: 200px;
+}
+
+.advogados-container .table-header:nth-child(2) {
+  width: 200px;
+}
+
+.advogados-container .table-header:nth-child(3) {
+  width: 200px;
+}
+
+.advogados-container .table-header:nth-child(4) {
+  width: 200px;
+}
+
+.advogados-container .table-header:nth-child(5) {
+  width: 80px;
+}
+
+.advogados-container .table-data:nth-child(1) {
+  width: 200px;
+}
+
+.advogados-container .table-data:nth-child(2) {
+  width: 200px;
+}
+
+.advogados-container .table-data:nth-child(3) {
+  width: 200px;
+}
+
+.advogados-container .table-data:nth-child(4) {
+  width: 200px;
+}

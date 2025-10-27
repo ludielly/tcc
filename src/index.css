@@ -25,3 +25,149 @@
 h1 {
   color: var(--primary-color);
 }
+
+fieldset {
+  border: none;
+  margin-bottom: 15px;
+}
+
+.error {
+  border-color: var(--highlight-color_red);
+  color: var(--highlight-color_red);
+}
+
+.error input::placeholder {
+  color: var(--highlight-color_red);
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+header h1 {
+  font-size: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+}
+
+.two-columns {
+  display: flex;
+  gap: 32px;
+}
+
+.two-columns fieldset {
+  flex: 1;
+}
+
+.form-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.form-link svg {
+  fill: var(--primary-color);
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 18px;
+  margin-top: 16px;
+}
+
+.form-error, .form-error svg {
+  fill: var(--highlight-color_red);
+  color: var(--highlight-color_red);
+}
+
+.table-container {
+  width: 100%;
+  margin-top: 32px;
+}
+
+.table {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.table-head {
+  width: 100%;
+}
+
+.table-head tr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 32px;
+}
+
+.table-header {
+  font-size: 18px;
+  color: var(--primary-color);
+  padding: 16px 0;
+}
+
+
+.table-body {
+  border: 1px solid var(--gray-color);
+  border-radius: 8px;
+  padding: 16px 0;
+  width: 100%;
+  height: 500px;
+}
+
+.data {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.table-data {
+  text-align: center;
+  padding: 16px;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.table-data.action-cell {
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.no-data .table-data {
+  width: auto !important;
+  font-size: 18px;
+}
