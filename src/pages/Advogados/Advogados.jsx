@@ -9,25 +9,36 @@ import {
   PencilSimpleIcon,
   PlusIcon,
   WarningIcon,
+  CaretLeft, // Importando ícone de seta esquerda
+  CaretRight,
+  CaretLeftIcon,
+  CaretRightIcon, // Importando ícone de seta direita
 } from "@phosphor-icons/react";
 
 function Advogados() {
 
+  // --- Paginação States ---
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const advogadosPorPagina = 9; // Limite de 9 linhas na tabela
+  // -----------------------
+
   const [busca, setBusca] = useState("");
   const [advogados, setAdvogados] = useState([
-    {
-      nome: "Ana Paula Rocha",
-      numeroOab: "OAB/SP nº 123456",
-      cpf: "111.222.333-44",
-      email: "ana.paula@adv.com"
-    },
-    {
-      nome: "Carlos Eduardo Santos",
-      numeroOab: "OAB/RJ nº 987654",
-      cpf: "555.666.777-88",
-      email: "carlos.santos@adv.com"
-    },
+    { nome: "Ana Paula Rocha", numeroOab: "OAB/SP nº 123456", cpf: "111.222.333-44", email: "ana.paula@adv.com" },
+    { nome: "Carlos Eduardo Santos", numeroOab: "OAB/RJ nº 987654", cpf: "555.666.777-88", email: "carlos.santos@adv.com" },
+    { nome: "Mariana Costa Oliveira", numeroOab: "OAB/MG nº 345678", cpf: "222.333.444-55", email: "mariana.oliveira@adv.com" },
+    { nome: "Ricardo Almeida Lima", numeroOab: "OAB/BA nº 109876", cpf: "666.777.888-99", email: "ricardo.lima@adv.com" },
+    { nome: "Juliana Mendes Silva", numeroOab: "OAB/PR nº 456789", cpf: "333.444.555-66", email: "juliana.silva@adv.com" },
+    { nome: "Fernando Henrique Diniz", numeroOab: "OAB/RS nº 210987", cpf: "777.888.999-00", email: "fernando.diniz@adv.com" },
+    { nome: "Gabriela Farias Gomes", numeroOab: "OAB/SC nº 567890", cpf: "444.555.666-77", email: "gabriela.gomes@adv.com" },
+    { nome: "Hélio Borges Neto", numeroOab: "OAB/PE nº 321098", cpf: "888.999.000-11", email: "helio.neto@adv.com" },
+    { nome: "Isabela Teixeira Moura", numeroOab: "OAB/DF nº 678901", cpf: "999.000.111-22", email: "isabela.moura@adv.com" },
+    // Dados adicionais para testar a paginação (total de 12)
+    { nome: "Jonas Queiroz Passos", numeroOab: "OAB/GO nº 789012", cpf: "101.112.131-41", email: "jonas.passos@adv.com" },
+    { nome: "Larissa Valente Nunes", numeroOab: "OAB/ES nº 890123", cpf: "121.314.151-61", email: "larissa.nunes@adv.com" },
+    { nome: "Marcos Oliveira Brito", numeroOab: "OAB/CE nº 901234", cpf: "171.819.202-12", email: "marcos.brito@adv.com" },
   ]);
+
   const [showModal, setShowModal] = useState(false);
   const [formError, setFormError] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -41,6 +52,7 @@ function Advogados() {
 
   const [novoAdvogado, setNovoAdvogado] = useState(initialAdvogadoState);
 
+  // Funções do Modal (Mantidas)
   const openModal = (advogadoToEdit = initialAdvogadoState, index = null) => {
     setNovoAdvogado(advogadoToEdit);
     setEditingIndex(index);
@@ -54,9 +66,26 @@ function Advogados() {
     setEditingIndex(null);
   };
 
+  // --- Lógica de Filtragem ---
   const advogadosFiltrados = advogados.filter((a) =>
     a.nome.toLowerCase().includes(busca.toLowerCase()) || a.email.toLowerCase().includes(busca.toLowerCase())
   );
+
+  // --- Lógica de Paginação ---
+  const totalPaginas = Math.ceil(advogadosFiltrados.length / advogadosPorPagina);
+  const indiceFinal = paginaAtual * advogadosPorPagina;
+  const indiceInicial = indiceFinal - advogadosPorPagina;
+
+  // Advogados a serem exibidos na página atual (após a filtragem)
+  const advogadosAtuais = advogadosFiltrados.slice(indiceInicial, indiceFinal);
+
+  const mudarPagina = (numeroPagina) => {
+    if (numeroPagina >= 1 && numeroPagina <= totalPaginas) {
+      setPaginaAtual(numeroPagina);
+    }
+  };
+  // --------------------------
+
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -65,6 +94,7 @@ function Advogados() {
 
   const handleSaveNew = () => {
     setAdvogados((prev) => [...prev, novoAdvogado]);
+    setPaginaAtual(1); // Opcional: Vai para a primeira página após adicionar um novo
     closeModal();
   };
 
@@ -102,8 +132,11 @@ function Advogados() {
       <div className="input">
         <Input
           startIcon={MagnifyingGlassIcon}
-          placeholder="Buscar advogado"
-          handleChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar advogado por nome ou e-mail"
+          handleChange={(e) => {
+            setBusca(e.target.value);
+            setPaginaAtual(1); // Resetar para a primeira página ao buscar
+          }}
           value={busca}
         />
       </div>
@@ -120,9 +153,10 @@ function Advogados() {
             </tr>
           </thead>
           <tbody className="table-body">
-            {advogadosFiltrados.length > 0 ? (
-              advogadosFiltrados.map((a, index) => (
-                <tr key={index} className="data">
+            {/* Renderiza apenas os advogados da página atual */}
+            {advogadosAtuais.length > 0 ? (
+              advogadosAtuais.map((a, index) => (
+                <tr key={indiceInicial + index} className="data">
                   <td className="table-data">{a.nome}</td>
                   <td className="table-data">{a.numeroOab}</td>
                   <td className="table-data">{a.cpf}</td>
@@ -132,7 +166,8 @@ function Advogados() {
                       icon={PencilSimpleIcon}
                       className="icon"
                       iconWeight="fill"
-                      handleClick={() => openModal(a, index)}
+                      // Encontra o índice no array de advogados original para edição
+                      handleClick={() => openModal(a, advogados.findIndex(item => item.cpf === a.cpf))}
                     >
                     </Button>
                   </td>
@@ -146,6 +181,32 @@ function Advogados() {
               </tr>
             )}
           </tbody>
+          {/* --- Componente de Paginação --- */}
+          {totalPaginas > 1 && (
+            <div className="pagination-container">
+              <Button
+                icon={CaretLeftIcon}
+                handleClick={() => mudarPagina(paginaAtual - 1)}
+                disabled={paginaAtual === 1}
+                className="icon"
+              >
+              </Button>
+
+              <span className="page-info">
+                {paginaAtual} / {totalPaginas}
+              </span>
+
+              <Button
+                icon={CaretRightIcon}
+                handleClick={() => mudarPagina(paginaAtual + 1)}
+                disabled={paginaAtual === totalPaginas}
+                className="icon"
+              >
+              </Button>
+            </div>
+          )}
+          {/* --- Fim da Paginação --- */}
+
         </table>
       </div>
 
