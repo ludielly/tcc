@@ -7,19 +7,23 @@ import Advogados from "./pages/Advogados/Advogados";
 import Processos from "./pages/Processos/Processos";
 import NotFound from "./pages/NotFound/NotFound";
 
+import { ClienteProvider } from "./contexts/ClienteContext";
+
 function App() {
   return (
     <Router>
       <div className="app">
         <Menu />
         <div className="content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/advogados" element={<Advogados />} />
-            <Route path="/processos" element={<Processos />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <ClienteProvider>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/advogados" element={<Advogados />} />
+              <Route path="/processos" element={<Processos />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ClienteProvider>
         </div>
       </div>
     </Router>

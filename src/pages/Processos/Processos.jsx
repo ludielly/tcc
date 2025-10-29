@@ -13,47 +13,30 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
 } from "@phosphor-icons/react";
+import { useClientes } from "../../contexts/ClienteContext";
 
 function Processos() {
+  const { clientes } = useClientes()
   const [busca, setBusca] = useState("");
-  const [processos] = useState([ // Removido setProcessos para simplificar a demonstração, mas você pode reintroduzi-lo se for necessário adicionar/editar dados
-    { numero: "0001/2025", titulo: "Revisão Contratual Cliente A", responsavel: "Ana Maria", status: "Em Andamento", dataCriacao: "2025-01-15" },
-    { numero: "0002/2025", titulo: "Homologação de Fornecedor B", responsavel: "João Carlos", status: "Concluído", dataCriacao: "2025-02-20" },
-    { numero: "0003/2025", titulo: "Análise de Risco Operacional", responsavel: "Ana Maria", status: "Pendente", dataCriacao: "2025-03-01" },
-    { numero: "0004/2025", titulo: "Gestão de Riscos Ambientais", responsavel: "Pedro Henrique", status: "Em Andamento", dataCriacao: "2025-03-10" },
-    { numero: "0005/2025", titulo: "Auditoria Interna de TI", responsavel: "Carla Souza", status: "Aguardando Aprovação", dataCriacao: "2025-03-25" },
-    { numero: "0006/2025", titulo: "Desenvolvimento de Produto X", responsavel: "Roberto Lima", status: "Pendente", dataCriacao: "2025-04-05" },
-    { numero: "0007/2025", titulo: "Validação de Sistema de Vendas", responsavel: "Ana Maria", status: "Em Andamento", dataCriacao: "2025-04-12" },
-    { numero: "0008/2025", titulo: "Ajuste de Preços de Serviços", responsavel: "João Carlos", status: "Concluído", dataCriacao: "2025-04-18" },
-    { numero: "0009/2025", titulo: "Treinamento de Equipe Júnior", responsavel: "Carla Souza", status: "Em Andamento", dataCriacao: "2025-04-25" },
-    // Mais dados para testar a paginação (total de 15)
-    { numero: "0010/2025", titulo: "Documentação Legal", responsavel: "Pedro Henrique", status: "Aguardando Aprovação", dataCriacao: "2025-05-01" },
-    { numero: "0011/2025", titulo: "Renovação de Licenças", responsavel: "Ana Maria", status: "Pendente", dataCriacao: "2025-05-07" },
-    { numero: "0012/2025", titulo: "Monitoramento de Mercado", responsavel: "Roberto Lima", status: "Concluído", dataCriacao: "2025-05-15" },
-    { numero: "0013/2025", titulo: "Campanha de Marketing Q2", responsavel: "Carla Souza", status: "Em Andamento", dataCriacao: "2025-05-20" },
-    { numero: "0014/2025", titulo: "Reunião Estratégica", responsavel: "João Carlos", status: "Aguardando Aprovação", dataCriacao: "2025-05-25" },
-    { numero: "0015/2025", titulo: "Análise de Desempenho", responsavel: "Pedro Henrique", status: "Concluído", dataCriacao: "2025-06-01" },
-  ]);
+  const [processos] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [formError, setFormError] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
 
-  // --- Paginação States ---
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const processosPorPagina = 9; // Limite de 9 linhas na tabela
+  const processosPorPagina = 9;
 
   const initialProcessoState = {
     numero: "",
-    titulo: "",
-    responsavel: "",
-    status: "",
-    dataCriacao: new Date().toISOString().substring(0, 10),
+    cliente: "",
+    area: "",
+    prazo: "",
+    status: ""
   };
 
   const [novoProcesso, setNovoProcesso] = useState(initialProcessoState);
 
-  // Funções de Modal (Sem mudanças na lógica)
   const openModal = (processoToEdit = initialProcessoState, index = null) => {
     setNovoProcesso(processoToEdit);
     setEditingIndex(index);
@@ -102,7 +85,6 @@ function Processos() {
     }
   };
 
-  // --- Lógica de Filtragem e Paginação ---
   const processosFiltrados = processos.filter(
     (p) =>
       p.numero.toLowerCase().includes(busca.toLowerCase()) ||
@@ -115,10 +97,8 @@ function Processos() {
   const indiceFinal = paginaAtual * processosPorPagina;
   const indiceInicial = indiceFinal - processosPorPagina;
 
-  // Processos a serem exibidos na página atual
   const processosAtuais = processosFiltrados.slice(indiceInicial, indiceFinal);
 
-  // Função para mudar a página
   const mudarPagina = (numeroPagina) => {
     if (numeroPagina >= 1 && numeroPagina <= totalPaginas) {
       setPaginaAtual(numeroPagina);
@@ -141,7 +121,7 @@ function Processos() {
           placeholder="Buscar por número, título ou responsável"
           handleChange={(e) => {
             setBusca(e.target.value);
-            setPaginaAtual(1); // Resetar para a primeira página ao buscar
+            setPaginaAtual(1);
           }}
           value={busca}
         />
@@ -152,10 +132,10 @@ function Processos() {
           <thead className="table-head">
             <tr>
               <th className="table-header">Número</th>
-              <th className="table-header">Título</th>
-              <th className="table-header">Responsável</th>
+              <th className="table-header">Cliente</th>
+              <th className="table-header">Área do Direito</th>
+              <th className="table-header">Prazo</th>
               <th className="table-header">Status</th>
-              <th className="table-header">Data de Criação</th>
               <th className="table-header"></th>
             </tr>
           </thead>
@@ -164,16 +144,15 @@ function Processos() {
               processosAtuais.map((p, index) => (
                 <tr key={indiceInicial + index} className="data">
                   <td className="table-data">{p.numero}</td>
-                  <td className="table-data">{p.titulo}</td>
-                  <td className="table-data">{p.responsavel}</td>
+                  <td className="table-data">{p.cliente}</td>
+                  <td className="table-data">{p.area}</td>
+                  <td className="table-data">{p.prazo}</td>
                   <td className="table-data">{p.status}</td>
-                  <td className="table-data">{p.dataCriacao}</td>
                   <td className="table-data action-cell">
                     <Button
                       icon={PencilSimpleIcon}
                       className="icon"
                       iconWeight="fill"
-                      // Nota: O índice passado aqui é o índice no array original/filtrado, mas estamos apenas simulando a edição.
                       handleClick={() => openModal(p, processos.findIndex(item => item.numero === p.numero))}
                     >
                     </Button>
@@ -222,20 +201,50 @@ function Processos() {
           onClose={closeModal}
           onSave={handleSave}
           title={editingIndex !== null ? "Editar Processo" : "Novo Processo"}
-          subtitle={editingIndex !== null ? "Processos > Editar" : "Processos > Novo"}
+          subtitle={editingIndex !== null ? "Processos > Editar Processo" : "Processos > Novo Processo"}
         >
           <form>
-            <fieldset>
-              <Label id="numero">Número do Processo</Label>
-              <Input
-                id="numero"
-                type="text"
-                placeholder="Ex: 0001/2025"
-                value={novoProcesso.numero}
-                handleChange={handleChange}
-                className={formError && !novoProcesso.numero ? "error" : ""}
-              />
-            </fieldset>
+            <div>
+              <fieldset>
+                <Label id="numero">Nº processo</Label>
+                <Input
+                  id="numero"
+                  type="text"
+                  placeholder="0000/0000"
+                  value={novoProcesso.numero}
+                  handleChange={handleChange}
+                  className={formError && !novoProcesso.numero ? "error" : ""}
+                />
+              </fieldset>
+              <fieldset>
+                <Label id="numero">Cliente</Label>
+                <Select
+                  id="cliente"
+                  value={novoProcesso.cliente}
+                  handleChange={handleChange}
+                  className={formError && !novoProcesso.cliente ? "error" : ""}
+                >
+                  <option value="">Selecione um cliente</option>
+                  {/* Itera sobre a lista de clientes ATUALIZADA do Contexto */}
+                  {clientes.map((c, index) => (
+                    <option key={index} value={c.nome}>
+                      {c.nome} ({c.cpfCnpj})
+                    </option>
+                  ))}
+                </Select>
+              </fieldset>
+              <fieldset>
+                <Label id="numero">Status</Label>
+                <Input
+                  id="numero"
+                  type="text"
+                  placeholder="Ex: 0001/2025"
+                  value={novoProcesso.numero}
+                  handleChange={handleChange}
+                  className={formError && !novoProcesso.numero ? "error" : ""}
+                />
+              </fieldset>
+            </div>
 
             <fieldset>
               <Label id="titulo">Título</Label>
