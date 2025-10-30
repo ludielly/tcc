@@ -12,19 +12,23 @@ import {
   WarningIcon,
   CaretLeftIcon,
   CaretRightIcon,
+  TrashIcon,
 } from "@phosphor-icons/react";
 import { useClientes } from "../../contexts/ClienteContext";
+import { useAdvogados } from "../../contexts/AdvogadoContext";
+import { useProcessos } from "../../contexts/ProcessoContext";
 
 function Processos() {
-  const { clientes } = useClientes()
-  const [busca, setBusca] = useState("");
-  const [processos] = useState([]);
+  const { clientes } = useClientes();
+  const { advogados } = useAdvogados();
+  const { processos, addProcesso, editProcesso } = useProcessos();
 
+  const [busca, setBusca] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [formError, setFormError] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
-
   const [paginaAtual, setPaginaAtual] = useState(1);
+
   const processosPorPagina = 9;
 
   const initialProcessoState = {
@@ -32,7 +36,8 @@ function Processos() {
     cliente: "",
     area: "",
     prazo: "",
-    status: ""
+    status: "",
+    partes: [{ nome: "", tipo: "" }],
   };
 
   const [novoProcesso, setNovoProcesso] = useState(initialProcessoState);
@@ -55,25 +60,24 @@ function Processos() {
     setNovoProcesso((prev) => ({ ...prev, [id]: value }));
   };
 
+
   const handleSaveNew = () => {
-    // Para simplificar e evitar warnings, estou reintroduzindo setProcessos temporariamente,
-    // mas em um cenário real, você deve gerenciar os IDs corretamente.
-    // Neste exemplo, vamos apenas fechar o modal.
-    // setProcessos((prev) => [...prev, novoProcesso]);
+    addProcesso(novoProcesso);
+    setPaginaAtual(1);
     closeModal();
   };
 
+  // ✅ Editar processo existente
   const handleEdit = () => {
-    // setProcessos((prev) =>
-    //   prev.map((p, i) => (i === editingIndex ? novoProcesso : p))
-    // );
+    editProcesso(editingIndex, novoProcesso);
     closeModal();
   };
 
+  // ✅ Validação e chamada de salvar
   const handleSave = () => {
-    const { numero, titulo, responsavel, status } = novoProcesso;
+    const { numero, cliente, status } = novoProcesso;
 
-    if (!numero || !titulo || !responsavel || !status) {
+    if (!numero || !cliente || !status) {
       setFormError(true);
       return;
     }
@@ -88,15 +92,13 @@ function Processos() {
   const processosFiltrados = processos.filter(
     (p) =>
       p.numero.toLowerCase().includes(busca.toLowerCase()) ||
-      p.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-      p.responsavel.toLowerCase().includes(busca.toLowerCase())
+      p.cliente.toLowerCase().includes(busca.toLowerCase()) ||
+      p.status.toLowerCase().includes(busca.toLowerCase())
   );
 
   const totalPaginas = Math.ceil(processosFiltrados.length / processosPorPagina);
-
   const indiceFinal = paginaAtual * processosPorPagina;
   const indiceInicial = indiceFinal - processosPorPagina;
-
   const processosAtuais = processosFiltrados.slice(indiceInicial, indiceFinal);
 
   const mudarPagina = (numeroPagina) => {
@@ -105,6 +107,29 @@ function Processos() {
     }
   };
 
+  const handleParteChange = (index, field, value) => {
+    setNovoProcesso((prev) => {
+      const novasPartes = [...prev.partes];
+      novasPartes[index][field] = value;
+      return { ...prev, partes: novasPartes };
+    });
+  };
+
+  // Adiciona uma nova linha de parte
+  const handleAddParte = () => {
+    setNovoProcesso((prev) => ({
+      ...prev,
+      partes: [...prev.partes, { nome: "", tipo: "" }],
+    }));
+  };
+
+  // Remove uma linha de parte
+  const handleRemoveParte = (index) => {
+    setNovoProcesso((prev) => ({
+      ...prev,
+      partes: prev.partes.filter((_, i) => i !== index),
+    }));
+  };
 
   return (
     <div className="processos-container">
@@ -204,7 +229,7 @@ function Processos() {
           subtitle={editingIndex !== null ? "Processos > Editar Processo" : "Processos > Novo Processo"}
         >
           <form>
-            <div>
+            <div className="columns">
               <fieldset>
                 <Label id="numero">Nº processo</Label>
                 <Input
@@ -216,7 +241,7 @@ function Processos() {
                   className={formError && !novoProcesso.numero ? "error" : ""}
                 />
               </fieldset>
-              <fieldset>
+              <fieldset className="bigger">
                 <Label id="numero">Cliente</Label>
                 <Select
                   id="cliente"
@@ -224,8 +249,7 @@ function Processos() {
                   handleChange={handleChange}
                   className={formError && !novoProcesso.cliente ? "error" : ""}
                 >
-                  <option value="">Selecione um cliente</option>
-                  {/* Itera sobre a lista de clientes ATUALIZADA do Contexto */}
+                  <option value="">Selecionar cliente</option>
                   {clientes.map((c, index) => (
                     <option key={index} value={c.nome}>
                       {c.nome} ({c.cpfCnpj})
@@ -245,30 +269,124 @@ function Processos() {
                 />
               </fieldset>
             </div>
+            <div className="partes-section">
+              {novoProcesso.partes.map((parte, index) => (
+                <div key={index} className="columns parte-linha">
+                  {/* Parte (Cliente ou Advogado) */}
+                  <fieldset className="bigger">
+                    {index === 0 && <Label id={`parte-${index}`}>Parte</Label>}
+                    <Select
+                      id={`parte-${index}`}
+                      value={parte.nome}
+                      handleChange={(e) => handleParteChange(index, "nome", e.target.value)}
+                    >
+                      <option value="">Adicionar parte envolvida</option>
 
-            <fieldset>
-              <Label id="titulo">Título</Label>
-              <Input
-                id="titulo"
-                type="text"
-                placeholder="Título/Assunto do processo"
-                value={novoProcesso.titulo}
-                handleChange={handleChange}
-                className={formError && !novoProcesso.titulo ? "error" : ""}
+                      <optgroup label="Clientes">
+                        {clientes.map((c, i) => (
+                          <option key={`cliente-${i}`} value={c.nome}>
+                            {c.nome} ({c.cpfCnpj})
+                          </option>
+                        ))}
+                      </optgroup>
+
+                      <optgroup label="Advogados">
+                        {advogados.map((a, i) => (
+                          <option key={`adv-${i}`} value={a.nome}>
+                            {a.nome} ({a.cpf})
+                          </option>
+                        ))}
+                      </optgroup>
+                    </Select>
+                  </fieldset>
+
+                  {/* Tipo da Parte */}
+                  <fieldset>
+                    {index === 0 && <Label id={`tipoParte-${index}`}>Tipo da Parte</Label>}
+                    <div className="parte-tipo-wrapper">
+                      <Select
+                        id={`tipoParte-${index}`}
+                        value={parte.tipo}
+                        handleChange={(e) => handleParteChange(index, "tipo", e.target.value)}
+                      >
+                        <option value="">Selecione o tipo da parte</option>
+                        <option value="Autor">Autor</option>
+                        <option value="Réu">Réu</option>
+                        <option value="Requerente">Requerente</option>
+                        <option value="Requerido">Requerido</option>
+                        <option value="Exequente">Exequente</option>
+                        <option value="Executado">Executado</option>
+                        <option value="Advogado">Advogado</option>
+                        <option value="Procurador">Procurador</option>
+                        <option value="Testemunha">Testemunha</option>
+                        <option value="Perito">Perito</option>
+                        <option value="Assistente Técnico">Assistente Técnico</option>
+                        <option value="Litisconsorte">Litisconsorte</option>
+                        <option value="Terceiro Interessado">Terceiro Interessado</option>
+                        <option value="Amicus Curiae">Amicus Curiae</option>
+                      </Select>
+
+                      {/* Botão de remover (não aparece na primeira linha) */}
+                      {index > 0 && (
+                        <Button
+                          icon={TrashIcon}
+                          handleClick={() => handleRemoveParte(index)}
+                          className="icon remove"
+                          iconWeight="fill"
+                          title="Remover esta parte"
+                        />
+                      )}
+                    </div>
+                  </fieldset>
+                </div>
+              ))}
+
+              {/* Botão de adicionar nova parte */}
+              <Button
+                icon={PlusIcon}
+                handleClick={handleAddParte}
+                className="icon add"
+                title="Adicionar nova parte"
               />
-            </fieldset>
+            </div>
 
-            <div className="two-columns">
-              <fieldset>
-                <Label id="responsavel">Responsável</Label>
-                <Input
-                  id="responsavel"
-                  type="text"
-                  placeholder="Nome do responsável"
+
+            <div className="columns">
+              <fieldset className="bigger">
+                <Label id="areaDireito">Área do Direito</Label>
+                <Select 
+                  id="areaDireito" 
                   value={novoProcesso.responsavel}
-                  handleChange={handleChange}
-                  className={formError && !novoProcesso.responsavel ? "error" : ""}
-                />
+                  handleChange={handleChange}>
+                    className={
+                    formError && !novoProcesso.area ? "error" : ""
+                  }
+                  <option value="">Selecione a área do Direito</option>
+                  <option value="Constitucional">Constitucional</option>
+                  <option value="Administrativo">Administrativo</option>
+                  <option value="Tributário">Tributário</option>
+                  <option value="Penal">Penal</option>
+                  <option value="Processual Penal">Processual Penal</option>
+                  <option value="Processual Civil">Processual Civil</option>
+                  <option value="Civil">Civil</option>
+                  <option value="Empresarial">Empresarial</option>
+                  <option value="Trabalhista">Trabalhista</option>
+                  <option value="Previdenciário">Previdenciário</option>
+                  <option value="Consumidor">Consumidor</option>
+                  <option value="Imobiliário">Imobiliário</option>
+                  <option value="Família">Família</option>
+                  <option value="Sucessões">Sucessões</option>
+                  <option value="Ambiental">Ambiental</option>
+                  <option value="Digital">Digital</option>
+                  <option value="Tecnologia e Proteção de Dados">Tecnologia e Proteção de Dados</option>
+                  <option value="Internacional">Internacional</option>
+                  <option value="Econômico">Econômico</option>
+                  <option value="Desportivo">Desportivo</option>
+                  <option value="Marítimo">Marítimo</option>
+                  <option value="Minerário">Minerário</option>
+                  <option value="Médico e da Saúde">Médico e da Saúde</option>
+
+                </Select>
               </fieldset>
               <fieldset>
                 <Label id="status">Status</Label>

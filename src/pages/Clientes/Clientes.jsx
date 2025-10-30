@@ -231,7 +231,7 @@ function Clientes() {
               />
             </fieldset>
 
-            <div className="two-columns">
+            <div className="columns">
               <fieldset>
                 <Label id="email">E-mail</Label>
                 <Input
@@ -256,7 +256,7 @@ function Clientes() {
               </fieldset>
             </div>
 
-            <div className="two-columns">
+            <div className="columns">
               <fieldset>
                 <Label id="cpfCnpj">CPF/CNPJ</Label>
                 <Input

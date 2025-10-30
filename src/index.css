@@ -62,13 +62,34 @@ fieldset {
   flex-direction: column;
 }
 
-.two-columns {
+fieldset div {
   display: flex;
-  gap: 32px;
+  gap: 4px;
+  width: 100%;
 }
 
-.two-columns fieldset {
+fieldset div select,
+fieldset div input {
+  width: 100%;
+}
+
+.columns {
+  display: flex;
+  gap: 16px;
+  min-width: 0;
+}
+
+.columns fieldset {
   flex: 1;
+}
+
+.columns fieldset {
+  flex: 1;
+  min-width: 0;
+}
+
+.columns fieldset.bigger, .columns fieldset.bigger {
+  flex: 2;
 }
 
 .form-link {

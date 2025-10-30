@@ -12,7 +12,7 @@
   background: var(--white-color);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 650px;
+  width: 850px;
   max-width: 90%;
   animation: fade-in 0.25s ease-out;
   overflow: hidden;

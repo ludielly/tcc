@@ -14,6 +14,7 @@ import {
   CaretLeftIcon,
   CaretRightIcon, // Importando ícone de seta direita
 } from "@phosphor-icons/react";
+import { useAdvogados } from "../../contexts/AdvogadoContext";
 
 function Advogados() {
 
@@ -23,21 +24,8 @@ function Advogados() {
   // -----------------------
 
   const [busca, setBusca] = useState("");
-  const [advogados, setAdvogados] = useState([
-    { nome: "Ana Paula Rocha", numeroOab: "OAB/SP nº 123456", cpf: "111.222.333-44", email: "ana.paula@adv.com" },
-    { nome: "Carlos Eduardo Santos", numeroOab: "OAB/RJ nº 987654", cpf: "555.666.777-88", email: "carlos.santos@adv.com" },
-    { nome: "Mariana Costa Oliveira", numeroOab: "OAB/MG nº 345678", cpf: "222.333.444-55", email: "mariana.oliveira@adv.com" },
-    { nome: "Ricardo Almeida Lima", numeroOab: "OAB/BA nº 109876", cpf: "666.777.888-99", email: "ricardo.lima@adv.com" },
-    { nome: "Juliana Mendes Silva", numeroOab: "OAB/PR nº 456789", cpf: "333.444.555-66", email: "juliana.silva@adv.com" },
-    { nome: "Fernando Henrique Diniz", numeroOab: "OAB/RS nº 210987", cpf: "777.888.999-00", email: "fernando.diniz@adv.com" },
-    { nome: "Gabriela Farias Gomes", numeroOab: "OAB/SC nº 567890", cpf: "444.555.666-77", email: "gabriela.gomes@adv.com" },
-    { nome: "Hélio Borges Neto", numeroOab: "OAB/PE nº 321098", cpf: "888.999.000-11", email: "helio.neto@adv.com" },
-    { nome: "Isabela Teixeira Moura", numeroOab: "OAB/DF nº 678901", cpf: "999.000.111-22", email: "isabela.moura@adv.com" },
-    // Dados adicionais para testar a paginação (total de 12)
-    { nome: "Jonas Queiroz Passos", numeroOab: "OAB/GO nº 789012", cpf: "101.112.131-41", email: "jonas.passos@adv.com" },
-    { nome: "Larissa Valente Nunes", numeroOab: "OAB/ES nº 890123", cpf: "121.314.151-61", email: "larissa.nunes@adv.com" },
-    { nome: "Marcos Oliveira Brito", numeroOab: "OAB/CE nº 901234", cpf: "171.819.202-12", email: "marcos.brito@adv.com" },
-  ]);
+  const { advogados, addAdvogado, editAdvogado } = useAdvogados();
+
 
   const [showModal, setShowModal] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -93,17 +81,15 @@ function Advogados() {
   };
 
   const handleSaveNew = () => {
-    setAdvogados((prev) => [...prev, novoAdvogado]);
-    setPaginaAtual(1); // Opcional: Vai para a primeira página após adicionar um novo
+    addAdvogado(novoAdvogado);
     closeModal();
   };
 
   const handleEdit = () => {
-    setAdvogados((prev) =>
-      prev.map((a, i) => (i === editingIndex ? novoAdvogado : a))
-    );
+    editAdvogado(editingIndex, novoAdvogado);
     closeModal();
   };
+
 
   const handleSave = () => {
     const { nome, numeroOab, cpf, email } = novoAdvogado;
@@ -219,7 +205,7 @@ function Advogados() {
           subtitle={editingIndex !== null ? "Advogados > Editar Advogado" : "Advogados > Novo Advogado"}
         >
           <form>
-            <div className="two-columns">
+            <div className="columns">
               <fieldset>
                 <Label id="nome">Nome</Label>
                 <Input
@@ -244,7 +230,7 @@ function Advogados() {
               </fieldset>
             </div>
 
-            <div className="two-columns">
+            <div className="columns">
               <fieldset>
                 <Label id="cpf">CPF</Label>
                 <Input

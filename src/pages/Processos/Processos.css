@@ -41,3 +41,16 @@
 .processos-container .table-data:nth-child(5) {
   width: 120px;
 }
+
+.btn.icon.add  svg{
+  fill: var(--text-color);
+}
+
+.btn.icon.remove  svg{
+  fill: var(--highlight-color_red);
+}
+
+.partes-section {
+  display: flex;
+  flex-direction: column;
+}
